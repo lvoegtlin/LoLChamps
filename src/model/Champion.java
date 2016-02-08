@@ -177,7 +177,7 @@ public class Champion {
         if (blank) {
             return "";
         } else {
-            return ShowName + ": <br><br> " + wins + " - " + loses + "  <br>" + kills + "/" + deaths + "/" + assists + "<br>  CS: " + minionsKilled;
+            return ShowName + ": <br> " + wins + " - " + loses + "  <br>" + kills + "/" + deaths + "/" + assists + "<br>  CS: " + minionsKilled;
         }
     }
 }

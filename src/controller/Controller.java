@@ -12,7 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -186,5 +188,17 @@ public class Controller {
     public void saveRegion(String region){
         Preferences root = Preferences.userNodeForPackage(LoLChapStatsBEV.class);
         root.put("region", region);
+    }
+
+    public void setURLHeaders(HttpURLConnection con) throws ProtocolException {
+        con.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+        con.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:26.0) Gecko/20100101 Firefox/26.0");
+        con.setRequestProperty("Referer", "http://www.lolnexus.com/EUW/search?name=ecrop&region=EUW");
+        con.setRequestProperty("Host", "www.lolnexus.com");
+        con.setRequestProperty("Connection", "keep-alive");
+        con.setRequestProperty("Accept-Language", "de-de,de;q=0.8,en-us;q=0.5,en;q=0.3");
+        con.setRequestProperty("Accept", "*/*");
+        con.setRequestMethod("GET");
+        con.setDoInput(true);
     }
 }

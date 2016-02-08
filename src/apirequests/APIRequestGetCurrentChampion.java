@@ -7,17 +7,21 @@ package apirequests;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import controller.Controller;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import model.Champion;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  *
@@ -44,15 +48,7 @@ public class APIRequestGetCurrentChampion {
             URL obj = new URL(connection);
 
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestProperty("X-Requested-With", "XMLHttpRequest");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:26.0) Gecko/20100101 Firefox/26.0");
-            con.setRequestProperty("Referer", "http://www.lolnexus.com/EUW/search?name=ecrop&region=EUW");
-            con.setRequestProperty("Host", "www.lolnexus.com");
-            con.setRequestProperty("Connection", "keep-alive");
-            con.setRequestProperty("Accept-Language", "de-de,de;q=0.8,en-us;q=0.5,en;q=0.3");
-            con.setRequestProperty("Accept", "*/*");
-            con.setRequestMethod("GET");
-            con.setDoInput(true);
+            Controller.getInstance().setURLHeaders(con);
 
             int responseCode = con.getResponseCode();
 
@@ -89,19 +85,24 @@ public class APIRequestGetCurrentChampion {
             } //dr-mundo etc./wukung/ in lolnexus file not DrMundo MonkeyKing!!!! 
 
             String html = jsonObject.get("html").getAsString();
-            html = html.replaceAll("           <a class=\"curse-voice-indicator\" href=\"http://beta.cursevoice.com/.utm_source=lolnexus&utm_medium=playericon&utm_campaign=openbeta\">\\r\\n", "");
-            html = html.replaceAll("               <div class=\"cv-tooltip\">\\r\\n", "");
-            html = html.replaceAll("                   <img src=\"http://static-noxia.cursecdn.com/1-0-5288-24525/skins/noxia/images/cv-horiz-tooltip.png\" />\\r\\n", "");
-            html = html.replaceAll("                   <span>Try it now!</span>\\r\\n", "");
-            html = html.replaceAll("                   <p>This player uses Curse Voice to communicate with their team.</p>\\r\\n", "");
-            html = html.replaceAll("               </div>\\r\\n", "");
             html = html.toLowerCase();
-            System.out.println(html);
-            Pattern p = Pattern.compile("(?<=(" + URLDecoder.decode(userName, "UTF-8") + "</span>\\r\\n        </a>\\r\\n        \\r\\n           </a>\\r\\n        \\r\\n     </td>\\r\\n    <td class=\"champion\">\\r\\n        <i class=\"icon champions-lol-28)).*?(?=(\"></i>\\r\\n))");
-            Matcher m = p.matcher(html);
 
-            if (m.find()) {//dr-mundo etc./wukung/ in lolnexus file not DrMundo MonkeyKing!!!! 
-                String currentChampName = m.group(0).trim();
+            Document doc = Jsoup.parse(html);
+            Elements el = doc.getElementsByClass("searched");
+
+            String championString = "";
+            for (Element e : el) {
+                Document doc2 = Jsoup.parse(e.html());
+                Elements el2 = doc2.getElementsByClass("icon");
+                for (Element e2 : el2){
+                    championString = e2.attr("class");
+                }
+            }
+
+            String[] champSplit = championString.split(" ");
+
+            if (champSplit.length == 3) {//dr-mundo etc./wukung/ in lolnexus file not DrMundo MonkeyKing!!!!
+                String currentChampName = champSplit[2];
                 if (currentChampName.contains("-")) {
                     currentChampName = currentChampName.replace("-", "");
                 }

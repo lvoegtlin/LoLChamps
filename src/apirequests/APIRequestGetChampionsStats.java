@@ -39,17 +39,13 @@ public class APIRequestGetChampionsStats {
     public void completeChampions() {
         String connection;
 
-        connection = "https://" + this.region + ".api.pvp.net/api/lol/" + this.region + "/v1.3/stats/by-summoner/" + this.summonerId + "/ranked?season=SEASON4&api_key=" + Controller.APIKEY + "";
+        connection = "https://" + this.region + ".api.pvp.net/api/lol/" + this.region + "/v1.3/stats/by-summoner/" + this.summonerId + "/ranked?season=SEASON2016&api_key=" + Controller.APIKEY + "";
 
         try {
             URL obj = new URL(connection);
 
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            try {
-                con.setRequestMethod("GET");
-            } catch (ProtocolException ex) {
-                Logger.getLogger(APIRequestGetChampionsStats.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Controller.getInstance().setURLHeaders(con);
 
             int responseCode = con.getResponseCode();
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));

@@ -324,13 +324,10 @@ public class LoLChapStatsBEV extends javax.swing.JFrame {
                     return;
                 }
 
-                if (champion != null) {
-                    return;
-                }
                 if (printFile.isSelected()) {
                     cnt.writeInOutputFile(cnt.getChampionByName(champion));
                 }
-                stats.setText("<html>" + "Champion stats: <br><br>" + cnt.getChampionByName(champion).toLable() + "</html>");
+                stats.setText("<html>Champion stats: <br><br>" + cnt.getChampionByName(champion).toLable() + "</html>");
             }
         }
     }
